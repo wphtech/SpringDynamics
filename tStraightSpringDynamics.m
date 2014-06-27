@@ -3,23 +3,37 @@ classdef tStraightSpringDynamics < matlab.unittest.TestCase
     methods (Test)
         
         function computeSpaceDiscretizationMatries(this)
-            vec = rand(3,1);
-            stateObj = SpringStates(vec);
-            paramObj = CustomParams(0.1, 1);
+            function testSameBoundaryAtEnds(boundaryType)
+                stateObj = SpringStates( rand(3,1) );
+                paramObj = CustomParams(0.1, boundaryType, boundaryType);
+                eta = paramObj.GridDistance;                
+                obj = StraightSpringDynamics(stateObj, stateObj, stateObj, paramObj);
+                
+                expAMat = eta * [paramObj.A00 paramObj.A01 0 0;
+                                            1 4 1 0;
+                                            0 1 4 1;
+                                            0 0 paramObj.ANNm1 paramObj.ANN];                
+                expBMat = 1/eta * [-1 1 0 0;
+                                                0 -1 1 0;
+                                                0 0 -1 1;
+                                                0 0 -1 1];                
+                expCMat = eta/3 * [2 1 0 0;
+                                                0 2 1 0;
+                                                0 0 2 1;
+                                                0 0 -1 -2];                                        
+                expUMat = 1/eta * [paramObj.U00 paramObj.U01 0 0;
+                                                3 -6 3 0;
+                                                0 3 -6 3;
+                                                0 0 paramObj.UNNm1 paramObj.UNN];
+                this.verifyEqual(obj.SD_Amat, sparse(expAMat));
+                this.verifyEqual(obj.SD_Bmat, sparse(expBMat));
+                this.verifyEqual(obj.SD_Cmat, sparse(expCMat));
+                this.verifyEqual(obj.SD_Umat, sparse(expUMat));
+            end
             
-            obj = StraightSpringDynamics(stateObj, stateObj, stateObj, paramObj);
-            
-            expAMat = sparse([1 0 0; 0 1 0; 0 0 1]);            
-            this.verifyEqual(obj.SD_Amat, expAMat);
-            
-            expBMat = sparse([1 0 0; 0 1 0; 0 0 1]);    
-            this.verifyEqual(obj.SD_Bmat, expBMat);
-
-            expCMat = sparse([1 0 0; 0 1 0; 0 0 1]);            
-            this.verifyEqual(obj.SD_Cmat, expCMat);
-
-            expUMat = sparse([1 0 0; 0 1 0; 0 0 1]);            
-            this.verifyEqual(obj.SD_Umat, expUMat);            
+            testSameBoundaryAtEnds(1);
+            testSameBoundaryAtEnds(2);
+            testSameBoundaryAtEnds(3);
         end
         
     end

@@ -41,28 +41,53 @@ classdef StraightSpringDynamics < DynamicEquations
         end
         
         function setSDAmat(this, N)
-            i = 1:N;
-            j = 1:N;
-            s = 1;
-            this.SD_Amat = sparse(i, j, 1, N, N);
+            len = N+1;
+            eta = this.CustomParams.GridDistance;
+            A00 = this.CustomParams.A00;
+            A01 = this.CustomParams.A01;
+            ANNm1 = this.CustomParams.ANNm1;
+            ANN = this.CustomParams.ANN;
+            B1 = sparse(1:len, 1:len, 4, len, len);
+            B2 = sparse(1:N, 2:len, 1,  len, len);
+            B3 = sparse(2:len, 1:N, 1,  len, len);
+            B4 = sparse([1 1 len len], [1 2 N len], ...
+                                [-4+A00, -1+A01, -1+ANNm1, -4+ANN], ...
+                                len, len);
+            this.SD_Amat = eta * (B1 + B2 + B3 + B4);
         end
         
         function setSDBmat(this, N)
-            i = 1:N;
-            j = 1:N;
-            this.SD_Bmat = sparse(i, j, 1, N, N);
+            len = N+1;
+            eta = this.CustomParams.GridDistance;            
+            B1 = sparse(1:len, 1:len, -1, len, len);
+            B2 = sparse(1:N, 2:len, 1,  len, len);
+            B3 = sparse([len len], [N len], [-1 2], len, len);
+            this.SD_Bmat = (B1 + B2 + B3)/eta;
         end
         
         function setSDCmat(this, N)
-            i = 1:N;
-            j = 1:N;
-            this.SD_Cmat = sparse(i, j, 1, N, N);
+            len = N+1;
+            eta = this.CustomParams.GridDistance;
+            B1 = sparse(1:len, 1:len, 2, len, len);
+            B2 = sparse(1:N, 2:len, 1,  len, len);
+            B3 = sparse([len len], [N len], [-1 -4], len, len);            
+            this.SD_Cmat = eta/3.0*(B1 + B2 + B3);
         end
         
         function setSDUmat(this, N)
-            i = 1:N;
-            j = 1:N;
-            this.SD_Umat = sparse(i, j, 1, N, N);
+            len = N+1;
+            eta = this.CustomParams.GridDistance;
+            U00 = this.CustomParams.U00;
+            U01 = this.CustomParams.U01;
+            UNNm1 = this.CustomParams.UNNm1;
+            UNN = this.CustomParams.UNN;
+            B1 = sparse(1:len, 1:len, -6, len, len);
+            B2 = sparse(1:N, 2:len, 3,  len, len);
+            B3 = sparse(2:len, 1:N, 3,  len, len);
+            B4 = sparse([1 1 len len], [1 2 N len], ...
+                                [6+U00, -3+U01, -3+UNNm1, 6+UNN], ...
+                                len, len);
+            this.SD_Umat = (B1 + B2 + B3 + B4)/eta;
         end
         
     end

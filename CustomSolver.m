@@ -1,6 +1,6 @@
-classdef customSolver
+classdef CustomSolver
 
-properties (access = private)
+properties (Access = private)
   options
 end
 

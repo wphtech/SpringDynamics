@@ -1,13 +1,8 @@
-classdef stateDescription
-
-methods (Abstract)
-
-  function states = getStates(this)
-  end
-
-  function states = setStates(this)
-  end
-
-end
-
+classdef StateDescription
+    
+    methods (Abstract)
+        getStates(this)
+        setStates(this)
+    end
+    
 end
