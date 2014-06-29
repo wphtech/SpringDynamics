@@ -33,7 +33,7 @@ classdef StraightSpringDynamics < DynamicEquations
     
     methods (Access = private)
         function computeSpaceDiscretizationMatries(this)
-            N = this.CurrentStates.GridNum;
+            N = this.CurrentStates.Size;
             this.setSDAmat(N);
             this.setSDBmat(N);
             this.setSDCmat(N);

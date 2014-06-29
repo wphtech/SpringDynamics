@@ -3,7 +3,7 @@ classdef tPhysModel < matlab.unittest.TestCase
     methods (Test)
         function constructor(this)
             vec = rand(5,1);
-            stateObj = SpringStates(vec);
+            stateObj = States(vec);
             dynamicObj = 'toDo';
             solverObj = 'toDo';
             

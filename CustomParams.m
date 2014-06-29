@@ -2,8 +2,13 @@ classdef CustomParams < handle
     
     properties (SetAccess = private, GetAccess = public)
         GridDistance
-        InitialEndBoundaryType
-        FinalEndBoundaryType
+        GridNum
+        UnitMass
+        Elasticity
+        DampFactor
+        LeftBoundary
+        RightBoundary
+        InitialStates
         A00
         A01
         ANNm1
@@ -15,21 +20,27 @@ classdef CustomParams < handle
     end
     
     methods (Access = public)
-        function obj = CustomParams(gridDistance,  initialEndType, finalEndType)
+        function obj = CustomParams(gridDistance,  gridNum, unitMass, elasticity, dampFactor, ...
+                leftBoundary, rightBoundary, initialStates)
             obj.GridDistance = gridDistance;
+            obj.GridNum = gridNum;
+            obj.UnitMass = unitMass;
+            obj.Elasticity = elasticity;
+            obj.DampFactor = dampFactor;
+            obj.InitialStates= initialStates;
             
-            obj.setBoundaryType(initialEndType, finalEndType);
+            obj.setBoundaryType(leftBoundary, rightBoundary);
         end
     
         % Set the boundary type. 
         %       1. Position and velocity of the boundary are known functions of t.
         %       2. Position but not the velocity of the boundary is a known function of t.
         %       3. Neither position nor velocity of the boundary is a known function of t.
-        function setBoundaryType(this, initialEndType, finalEndType)
-            this.InitialEndBoundaryType = initialEndType;
-            this.FinalEndBoundaryType = finalEndType;
+        function setBoundaryType(this, leftBoundary, rightBoundary)
+            this.LeftBoundary = leftBoundary;
+            this.RightBoundary = rightBoundary;
 
-            switch this.InitialEndBoundaryType
+            switch this.LeftBoundary.BoundaryType
                 case 1
                     this.A00 = 2; 
                     this.A01 = 1;
@@ -44,7 +55,7 @@ classdef CustomParams < handle
                     error('Unknown boundary type on the initialEnd!');
             end
             
-            switch this.FinalEndBoundaryType
+            switch this.LeftBoundary.BoundaryType
                 case 1
                     this.ANNm1 = 1; 
                     this.ANN = 2;
