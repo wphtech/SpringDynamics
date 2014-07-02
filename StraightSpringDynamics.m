@@ -9,6 +9,9 @@ classdef StraightSpringDynamics < DynamicEquations
         SD_Bmat
         SD_Cmat
         SD_Umat
+        SD_Zvec
+        SD_D1
+        SD_D2
     end
     
     methods (Access = public)
@@ -38,6 +41,8 @@ classdef StraightSpringDynamics < DynamicEquations
             this.setSDBmat(N);
             this.setSDCmat(N);
             this.setSDUmat(N);            
+            this.setSDZvec(N);
+            this.setSDDmat;
         end
         
         function setSDAmat(this, N)
@@ -90,6 +95,23 @@ classdef StraightSpringDynamics < DynamicEquations
             this.SD_Umat = (B1 + B2 + B3 + B4)/eta;
         end
         
+        function setSDZvec(this, N)
+            this.SD_Zvec = [this.CustomParams.Z0, ...
+                zeros(1, 3*(N-1)), ...
+                this.CustomParams.ZN];
+        end
+        
+        function setSDDmat(this)
+            A = this.SD_Amat;
+            B = this.SD_Bmat;
+            C = this.SD_Cmat;
+            U = this.SD_Umat;
+            
+            tmp = A \ U;
+            this.SD_D1 = B - C * tmp;
+            this.SD_D2 = 2 * tmp;
+        end
+            
     end
     
 end

@@ -9,17 +9,19 @@ classdef InitialStates < States
         function obj = InitialStates(stateFuncHandle, locator)
             obj.StateFunc = stateFuncHandle;
             obj.Locator = Grid(0, locator.StepSize, locator.MaxGridLength);
-            obj.setStates;
+             
+            data = obj.computeStates;
+            obj.setStates(data);
         end
         
-        function setStates(this, ~)
+        function data = computeStates(this)
+            data = [];
             while ~this.Locator.isEnd 
                 tmp = data;
-                location = this.Locater.CurrGrid;
+                location = this.Locator.CurrGrid;
                 data = [tmp this.StateFunc(location)];
                 this.Locator.advance;
             end
-            setStates@States(this, this.data);
         end
         
     end

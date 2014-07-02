@@ -5,7 +5,7 @@ classdef tStraightSpringDynamics < matlab.unittest.TestCase
         function computeSpaceDiscretizationMatries(this)
             function testSameBoundaryAtEnds(boundaryType)
                 stateObj = States( rand(3,1) );
-                boundary = BoundaryState(boundaryType, @()NULL);
+                boundary = BoundaryState(boundaryType, @(t)[0, 0, 0], @(t)[0, 0, 0]);
                 paramObj = CustomParams(0.1, 0, 0, 0, 0, boundary, boundary, stateObj);
                 eta = paramObj.GridDistance;                
                 obj = StraightSpringDynamics(stateObj, stateObj, stateObj, paramObj);

@@ -1,8 +1,8 @@
 classdef States < handle
     
     properties (SetAccess = private, GetAccess = public)
-        Size
-        Data
+        Size = 0;
+        Data = [];
     end
     
     methods (Access = public)
