@@ -26,7 +26,17 @@ classdef StraightSpringDynamics < DynamicEquations
             obj.computeSpaceDiscretizationMatries;
         end
             
-        function mat = systemDynamics(this, states, costates, time)
+        function res = systemDynamics(this, states, costates, time)
+            x = states; 
+            xlen = length(x);
+            a = costates;
+            alen = length(a);
+            
+            res = zeros(xlen + alen, 1);
+            
+            D1x = this.SD_D1*x;
+            
+            res(1) = D1x' * D1x;
         end
         
         function mat = jacobian(this, states, costates, time)
