@@ -5,6 +5,7 @@ classdef StraightSpringDynamics < DynamicEquations
         LastStates
         NextStates
         CustomParams
+        SD_Kmat
         SD_Amat
         SD_Bmat
         SD_Cmat
@@ -24,12 +25,11 @@ classdef StraightSpringDynamics < DynamicEquations
             
             obj.computeSpaceDiscretizationMatries;
         end
-        
-        
-        function mat = jacobian(this, states, time)
+            
+        function mat = systemDynamics(this, states, costates, time)
         end
         
-        function mat = systemDynamics(this, states, time)
+        function mat = jacobian(this, states, costates, time)
         end
         
     end
@@ -58,7 +58,7 @@ classdef StraightSpringDynamics < DynamicEquations
             B4 = sparse([1 1 len len], [1 2 N len], ...
                                 [-4+A00, -1+A01, -1+ANNm1, -4+ANN], ...
                                 len, len);
-            this.SD_Amat = eta * (B1 + B2 + B3 + B4);
+            this.SD_Amat = eta * kron(B1 + B2 + B3 + B4, eye(3));
         end
         
         function setSDBmat(this, N)
@@ -67,7 +67,7 @@ classdef StraightSpringDynamics < DynamicEquations
             B1 = sparse(1:len, 1:len, -1, len, len);
             B2 = sparse(1:N, 2:len, 1,  len, len);
             B3 = sparse([len len], [N len], [-1 2], len, len);
-            this.SD_Bmat = (B1 + B2 + B3)/eta;
+            this.SD_Bmat = kron(B1 + B2 + B3, eye(3))/eta;
         end
         
         function setSDCmat(this, N)
@@ -76,7 +76,7 @@ classdef StraightSpringDynamics < DynamicEquations
             B1 = sparse(1:len, 1:len, 2, len, len);
             B2 = sparse(1:N, 2:len, 1,  len, len);
             B3 = sparse([len len], [N len], [-1 -4], len, len);            
-            this.SD_Cmat = eta/3.0*(B1 + B2 + B3);
+            this.SD_Cmat = eta/3.0*kron(B1 + B2 + B3, eye(3));
         end
         
         function setSDUmat(this, N)
@@ -92,13 +92,13 @@ classdef StraightSpringDynamics < DynamicEquations
             B4 = sparse([1 1 len len], [1 2 N len], ...
                                 [6+U00, -3+U01, -3+UNNm1, 6+UNN], ...
                                 len, len);
-            this.SD_Umat = (B1 + B2 + B3 + B4)/eta;
+            this.SD_Umat = kron(B1 + B2 + B3 + B4, eye(3))/eta;
         end
         
         function setSDZvec(this, N)
             this.SD_Zvec = [this.CustomParams.Z0, ...
                 zeros(1, 3*(N-1)), ...
-                this.CustomParams.ZN];
+                this.CustomParams.ZN]';
         end
         
         function setSDDmat(this)

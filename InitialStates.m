@@ -19,7 +19,7 @@ classdef InitialStates < States
             while ~this.Locator.isEnd 
                 tmp = data;
                 location = this.Locator.CurrGrid;
-                data = [tmp this.StateFunc(location)];
+                data = [tmp; this.StateFunc(location)];
                 this.Locator.advance;
             end
         end

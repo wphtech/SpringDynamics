@@ -26,10 +26,10 @@ classdef tStraightSpringDynamics < matlab.unittest.TestCase
                                                 3 -6 3 0;
                                                 0 3 -6 3;
                                                 0 0 paramObj.UNNm1 paramObj.UNN];
-                this.verifyEqual(obj.SD_Amat, sparse(expAMat));
-                this.verifyEqual(obj.SD_Bmat, sparse(expBMat));
-                this.verifyEqual(obj.SD_Cmat, sparse(expCMat));
-                this.verifyEqual(obj.SD_Umat, sparse(expUMat));
+                this.verifyEqual(obj.SD_Amat, kron(sparse(expAMat), eye(3)));
+                this.verifyEqual(obj.SD_Bmat, kron(sparse(expBMat), eye(3)));
+                this.verifyEqual(obj.SD_Cmat, kron(sparse(expCMat), eye(3)));
+                this.verifyEqual(obj.SD_Umat, kron(sparse(expUMat), eye(3)));
             end
             
             testSameBoundaryAtEnds(1);
